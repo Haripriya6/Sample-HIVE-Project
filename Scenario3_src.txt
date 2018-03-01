@@ -1,0 +1,14 @@
+****************************************************************
+
+Problem Scenario 3 - What is the most consumed beverage on Branch1?
+
+****************************************************************
+
+Step 1: 
+
+Hive> select beverage,sum(totalcount) totcount from Branch1Constotcount group by beverage order by totcount desc limit 1;
+
+Solution
+Special_cappuccino 108163
+
+****************************************************************

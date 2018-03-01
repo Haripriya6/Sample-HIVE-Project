@@ -1,0 +1,17 @@
+****************************************************************
+
+Problem Scenario 4 - What are the beverages available on Branch10, Branch8, and Branch1?
+
+****************************************************************
+
+Step 1: 
+
+Hive> Create table if not exists BRANCH10BRANCH8BRANCH1beverage as select beverage,branch from (
+select * from BevbranchA where branch = 'BRANCH10' or branch = 'BRANCH8' or branch = 'BRANCH1' union all select * from BevbranchB where branch = 'BRANCH10' or branch = 'BRANCH8' or branch = 'BRANCH1' union all select * from BevbranchC where branch = 'BRANCH10' or branch = 'BRANCH8' or branch = 'BRANCH1' )unionResult ;
+
+Step 2: 
+
+[training@hadoop -]$ hive –e ‘select distinct(beverage),branch from BRANCH10BRANCH8BRANCH1beverage order by beverage’ | sed ‘s/[\t]/./g’ > /home/training/workspace/output.txt
+
+
+****************************************************************

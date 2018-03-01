@@ -1,0 +1,53 @@
+
+****************************************************************
+Problem Scenario 1 - What is the total number of consumers for Branch1?
+	
+Type 1: Creating single physical table with sub queries
+
+****************************************************************
+
+Step 1: 
+
+Hive> create table if not exists Branch1Constotcount as select beverage,totalcount from (select BevcountA.beverage,sum(BevcountA.count) totalcount from  (select beverage,branch from ( select * from BevbranchA where branch='BRANCH1' union all select * from  BevbranchB where branch='BRANCH1' union all select * from BevbranchC where  branch='BRANCH1')unionResult )a join BevcountA on(a.beverage=BevcountA.beverage) group by  BevcountA.beverage 
+union all 
+select BevcountB.beverage,sum(BevcountB.count) totalcount from ( select beverage,branch from  ( select * from BevbranchA where branch='BRANCH1' union all select * from BevbranchB where  branch='BRANCH1' union all select * from BevbranchC where branch='BRANCH1')unionResult )b join  BevcountB on(b.beverage=BevcountB.beverage) group by BevcountB.beverage
+union all 
+select BevcountC.beverage,sum(BevcountC.count) totalcount from ( select beverage,branch from  ( select * from BevbranchA where branch='BRANCH1' union all select * from BevbranchB where  branch='BRANCH1' union all select * from BevbranchC where branch='BRANCH1')unionResult )c join  BevcountC on(c.beverage=BevcountC.beverage) group by BevcountC.beverage
+)unionResult ;
+
+Step 2: 
+
+Hive> select sum(totalcount) from Branch1Constotcount;
+
+****************************************************************
+
+Type 2: Creating multiple physical tables
+
+****************************************************************
+
+Step 1: 
+
+Hive > create table if not exists BRANCH1Branch as select * from BevbranchA where branch = 'BRANCH1';
+
+Hive > insert into table BRANCH1Branch select * from BevbranchB where branch = 'BRANCH1';
+
+Hive > insert into table BRANCH1Branch select * from BevbranchC where branch = 'BRANCH1';
+
+Step 2: 
+
+Hive> create table if not exists BRANCH1branchcount(beverage string, count int);
+
+Hive> insert into table BRANCH1branchcount select BevcountA.beverage,sum(BevcountA.count) from BRANCH1Branch join BevcountA on(BRANCH1Branch.beverage = BevcountA.beverage ) group by BevcountA.beverage ; 
+
+Hive> insert into table BRANCH1branchcount select BevcountB.beverage,sum(BevcountB.count) from BRANCH1Branch join BevcountB on(BRANCH1Branch.beverage = BevcountB.beverage ) group by BevcountB.beverage ; 
+
+Hive> insert into table BRANCH1branchcount select BevcountC.beverage,sum(BevcountC.count) from BRANCH1Branch join BevcountC on(BRANCH1Branch.beverage = BevcountC.beverage ) group by BevcountC.beverage ;  
+
+Step 3: 
+
+Hive> select sum(count) from BRANCH1branchcount;
+
+Solution
+ 1115974
+
+****************************************************************
